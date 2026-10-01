@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tommy Hilfiger India — Marketing Funnel &amp; Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#0B1F3A; --navy2:#16305A; --crimson:#C8102E; --gold:#A9852F;
+  --cream:#F7F3EA; --white:#FFFFFF; --slate:#5B6472; --line:#DDD6C4; --green:#1A7A3C;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ } }
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-padding-top:env(safe-area-inset-top,0px); height:100%;}
+body{background:var(--cream); color:var(--navy); font-family:'Inter',sans-serif; height:100%; overflow-x:hidden;}
+h1,h2,h3{font-family:'Oswald',sans-serif;}
+.num{font-family:'Archivo Black',sans-serif;}
+.gold-rule{width:36px; height:3px; background:var(--gold);}
+
+/* ---- Shell ---- */
+.shell{display:flex; min-height:100vh;}
+.sidebar{width:238px; flex-shrink:0; background:var(--navy); color:var(--white); padding:26px 0; position:sticky; top:0; height:100vh; display:flex; flex-direction:column;}
+.brand{padding:0 24px 22px; border-bottom:1px solid rgba(255,255,255,.12); margin-bottom:14px;}
+.brand .mark{font-family:'Oswald',sans-serif; font-weight:700; font-size:19px; letter-spacing:.02em; line-height:1.15;}
+.brand .sub{font-size:10.5px; color:#9FB2CC; letter-spacing:.08em; margin-top:6px;}
+nav.navlist{display:flex; flex-direction:column; gap:2px; padding:0 12px;}
+.navitem{display:flex; align-items:center; gap:10px; padding:11px 12px; font:600 12.5px 'Inter',sans-serif; color:#B9C6DA; cursor:pointer; border-left:3px solid transparent;}
+.navitem:hover{color:var(--white);}
+.navitem.active{color:var(--white); background:rgba(255,255,255,.06); border-left-color:var(--gold);}
+.sidebar-foot{margin-top:auto; padding:16px 24px 0; font-size:10px; color:#7488A5; border-top:1px solid rgba(255,255,255,.1);}
+
+.content{flex:1; min-width:0;}
+.topbar{display:none;}
+main{max-width:1080px; margin:0 auto; padding:40px 5vw 80px;}
+.view{display:none; animation:fadein .3s ease;}
+.view.active{display:block;}
+@keyframes fadein{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.sec-title{display:flex; align-items:baseline; gap:12px; margin-bottom:6px;}
+.sec-title h2{font-size:22px; font-weight:600;}
+.sec-sub{font-size:12.5px; color:var(--slate); margin:8px 0 20px; max-width:64ch;}
+section.block{margin-bottom:44px;}
+
+/* ---- Hero ---- */
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2)); color:var(--white); padding:38px 5vw; position:relative; overflow:hidden;}
+.hero::after{content:""; position:absolute; right:-40px; top:-40px; width:220px; height:220px; border:1px solid rgba(255,255,255,.08); border-radius:50%;}
+.hero-inner{max-width:1080px; margin:0 auto; display:flex; justify-content:space-between; align-items:flex-end; gap:24px; flex-wrap:wrap; position:relative;}
+.hero-num{font-family:'Archivo Black',sans-serif; font-size:clamp(52px,7vw,84px); line-height:.9;}
+.hero-lbl{font-size:13px; color:#AEC0DC; margin-top:8px; max-width:34ch;}
+.hero-side{display:flex; gap:22px; flex-wrap:wrap;}
+.hero-stat{border-left:2px solid var(--gold); padding-left:12px;}
+.hero-stat .n{font-family:'Archivo Black',sans-serif; font-size:22px;}
+.hero-stat .l{font-size:10.5px; color:#9FB2CC; margin-top:2px;}
+.promo-strip{background:var(--crimson); color:var(--white); font-size:11.5px; padding:8px 5vw; letter-spacing:.02em;}
+.promo-strip b{font-family:'Archivo Black',sans-serif;}
+
+.tabbar{display:flex; gap:8px; margin-bottom:18px; flex-wrap:wrap;}
+.tab{font:600 11.5px/1 'Inter',sans-serif; padding:7px 13px; border:1px solid var(--line); background:var(--white); color:var(--navy); cursor:pointer;}
+.tab.active{background:var(--navy); color:var(--white); border-color:var(--navy);}
+
+.card-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:14px;}
+.idx-card{background:var(--white); border:1px solid var(--line); border-top:3px solid var(--gold); padding:16px 16px 14px; cursor:pointer;}
+.idx-card h3{font-size:13.5px; font-weight:600; margin-bottom:6px;}
+.idx-card p{font-size:11.5px; color:var(--slate);}
+
+.funnel{display:flex; flex-direction:column; gap:2px;}
+.stage{position:relative; display:flex; align-items:center; height:66px; color:var(--white); cursor:pointer;}
+.band{height:100%; display:flex; align-items:center; padding-left:22px; position:relative; transition:width .35s ease, outline .15s ease;}
+.stage.selected .band{outline:3px solid var(--gold); outline-offset:-3px;}
+.stage-name{font-family:'Oswald',sans-serif; font-weight:600; font-size:13.5px; letter-spacing:.02em;}
+.stage-sub{font-size:10.5px; color:rgba(255,255,255,.65); margin-left:10px;}
+.stage-meta{margin-left:auto; text-align:right; padding-right:22px; white-space:nowrap;}
+.stage-meta .num{font-size:20px; display:block;}
+.stage-meta .pct{font-size:10.5px; color:rgba(255,255,255,.75);}
+.dropoff{font-size:10.5px; color:var(--crimson); font-weight:600; padding:4px 22px 0;}
+.detail{background:var(--white); border:1px solid var(--line); border-left:4px solid var(--gold); padding:14px 18px; margin-top:10px; display:none; font-size:12.5px;}
+.detail.show{display:block;}
+.detail .dt-title{font-family:'Oswald',sans-serif; font-weight:600; font-size:13px; margin-bottom:6px;}
+.detail .dt-row{display:flex; gap:24px; flex-wrap:wrap;}
+.detail .dt-row b{display:block; font-family:'Archivo Black',sans-serif; font-size:16px; margin-top:2px;}
+.detail .dt-row span{color:var(--slate); font-size:10.5px;}
+
+.kpi-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+.kpi{background:var(--white); padding:16px 14px;}
+.kpi .lbl{font-size:10.5px; letter-spacing:.03em; color:var(--slate);}
+.kpi .num{font-size:24px; margin-top:5px;}
+.kpi .delta{font-size:11px; margin-top:3px; font-weight:600;}
+.up{color:var(--green);} .down{color:var(--crimson);}
+
+.grid2{display:grid; grid-template-columns:1.2fr 1fr; gap:24px;}
+.campaign-list{display:flex; flex-direction:column; gap:10px;}
+.camp-row{background:var(--white); border:1px solid var(--line); padding:13px 15px;}
+.camp-top{display:flex; justify-content:space-between; align-items:baseline; gap:10px;}
+.camp-name{font-family:'Oswald',sans-serif; font-weight:600; font-size:13px;}
+.camp-tag{font-size:10.5px; color:var(--slate); margin-top:2px;}
+.camp-track{height:7px; background:var(--cream); border:1px solid var(--line); margin-top:8px;}
+.camp-fill{height:100%; background:var(--gold);}
+.camp-val{font-family:'Archivo Black',sans-serif; font-size:17px;}
+
+.chan-row{display:grid; grid-template-columns:112px 1fr 44px; align-items:center; gap:10px; margin-bottom:10px;}
+.chan-name{font-size:12.5px; font-weight:600;}
+.chan-track{height:12px; background:var(--white); border:1px solid var(--line);}
+.chan-fill{height:100%;}
+.chan-val{font-size:11.5px; text-align:right; color:var(--slate); font-weight:600;}
+
+.note{background:var(--white); border:1px solid var(--line); border-left:3px solid var(--gold); padding:14px 16px; font-size:12.5px;}
+.note .n{font-size:16px; font-family:'Archivo Black',sans-serif; display:block; margin-bottom:3px;}
+
+table.dt{width:100%; border-collapse:collapse; background:var(--white); border:1px solid var(--line);}
+table.dt th{text-align:left; font-size:10.5px; letter-spacing:.03em; color:var(--slate); font-weight:600; padding:10px 14px; border-bottom:1px solid var(--line);}
+table.dt td{padding:11px 14px; font-size:12.5px; border-bottom:1px solid var(--line);}
+table.dt tr:last-child td{border-bottom:none;}
+.price{font-family:'Archivo Black',sans-serif; font-size:13px;}
+.cat-pill{display:inline-block; font-size:10px; padding:2px 8px; background:var(--cream); border:1px solid var(--line); color:var(--slate);}
+input.search{width:100%; padding:10px 14px; border:1px solid var(--line); background:var(--white); font:500 12.5px 'Inter',sans-serif; margin-bottom:10px; color:var(--navy);}
+
+.patch-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+.patch{border:2px solid var(--navy); padding:14px 14px 12px; position:relative; background:var(--white);}
+.patch::before{content:""; position:absolute; inset:5px; border:1px dashed var(--line);}
+.patch h3{font-size:12px; font-weight:600; position:relative;}
+.patch .num{font-size:22px; color:var(--crimson); margin-top:6px; position:relative;}
+.patch p{font-size:10.5px; color:var(--slate); margin-top:5px; position:relative;}
+
+.calc{background:var(--white); border:1px solid var(--line); padding:20px;}
+.calc-top{display:flex; justify-content:space-between; font-size:12.5px; font-weight:600; margin-bottom:6px;}
+.calc-note{font-size:10.5px; color:var(--slate); margin-top:12px;}
+
+@media (max-width:900px){
+  .sidebar{display:none;}
+  .topbar{display:flex; overflow-x:auto; gap:6px; padding:12px 4vw; background:var(--navy); position:sticky; top:0; z-index:5;}
+  .topbar .navitem{white-space:nowrap; border-left:none; border-bottom:3px solid transparent; padding:8px 12px;}
+  .topbar .navitem.active{border-bottom-color:var(--gold); background:transparent;}
+  .card-grid,.kpi-grid,.patch-grid{grid-template-columns:repeat(2,1fr);}
+  .grid2{grid-template-columns:1fr;}
+  .hero-inner{flex-direction:column; align-items:flex-start;}
+}
+@media (max-width:560px){ .chan-row{grid-template-columns:78px 1fr 38px;} table.dt{font-size:11px;} .card-grid,.kpi-grid,.patch-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="mark">TOMMY HILFIGER<br>INDIA</div><div class="sub">in.tommy.com · Marketing Dashboard</div></div>
+    <nav class="navlist" id="navlist"></nav>
+    <div class="sidebar-foot">Built from live site structure, campaigns &amp; pricing. Volumes are illustrative estimates for academic use.</div>
+  </aside>
+
+  <div class="content">
+    <div class="topbar" id="topbar"></div>
+    <div class="promo-strip">New launch offer — use <b>LAUNCH10</b> on all new-season styles</div>
+    <div class="hero">
+      <div class="hero-inner">
+        <div>
+          <div class="hero-num">6.9%</div>
+          <div class="hero-lbl">of everyone TH India reaches this quarter completes a purchase — the single number this whole dashboard exists to move.</div>
+        </div>
+        <div class="hero-side">
+          <div class="hero-stat"><div class="n">18.4M</div><div class="l">Reached</div></div>
+          <div class="hero-stat"><div class="n">₹4,860</div><div class="l">Avg. order value</div></div>
+          <div class="hero-stat"><div class="n">41%</div><div class="l">LAUNCH10 redemption</div></div>
+        </div>
+      </div>
+    </div>
+
+    <main>
+
+      <div class="view active" data-view="overview">
+        <div class="sec-title"><h2>Overview</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">Seven views cover the journey end to end — jump to any of them from here or from the sidebar.</p>
+        <div class="card-grid">
+          <div class="idx-card" data-goto="funnel"><h3>The Funnel</h3><p>Awareness through Retention, segmented by Men/Women/Kids, with click-through stage detail.</p></div>
+          <div class="idx-card" data-goto="campaigns"><h3>Campaigns &amp; Channels</h3><p>Live homepage campaigns, awareness channel mix, marketplace reach beyond in.tommy.com.</p></div>
+          <div class="idx-card" data-goto="behavior"><h3>Shopper Behavior</h3><p>Search &amp; filter use, wishlist engagement, a live searchable/sortable bestsellers table.</p></div>
+          <div class="idx-card" data-goto="checkout"><h3>Checkout &amp; Payment</h3><p>Step-by-step drop-off, payment mix, and an interactive promo-depth calculator.</p></div>
+          <div class="idx-card" data-goto="retention"><h3>Retention &amp; Fit</h3><p>Order tracking, returns, size-driven exchange behaviour post-purchase.</p></div>
+          <div class="idx-card" data-goto="opportunities"><h3>Opportunities</h3><p>Where the funnel is leaking, and specific fixes — promo cadence, localization.</p></div>
+        </div>
+      </div>
+
+      <div class="view" data-view="funnel">
+        <div class="sec-title"><h2>Customer Journey Funnel</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">Mapped to the live site journey: campaign discovery, category browse, product page, cart/checkout, then retention. Filter by segment; click a stage for detail.</p>
+        <div class="tabbar" id="segTabs">
+          <div class="tab active" data-seg="all">All Shoppers</div>
+          <div class="tab" data-seg="men">Men</div>
+          <div class="tab" data-seg="women">Women</div>
+          <div class="tab" data-seg="kids">Kids</div>
+        </div>
+        <div class="funnel" id="funnel"></div>
+        <div class="detail" id="detail"></div>
+        <section class="block" style="margin-top:34px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Funnel Economics</h2></div>
+          <div class="kpi-grid" id="kpiGrid" style="margin-top:12px;"></div>
+        </section>
+      </div>
+
+      <div class="view" data-view="campaigns">
+        <div class="sec-title"><h2>Campaigns &amp; Channels</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">Homepage storytelling modules currently on in.tommy.com, ranked by share of site sessions this week.</p>
+        <div class="campaign-list">
+          <div class="camp-row"><div class="camp-top"><div><div class="camp-name">Only In New York — ft. Travis Kelce</div><div class="camp-tag">Fall 2026 hero campaign</div></div><div class="camp-val">38%</div></div><div class="camp-track"><div class="camp-fill" style="width:38%;"></div></div></div>
+          <div class="camp-row"><div class="camp-top"><div><div class="camp-name">Varsity Prep</div><div class="camp-tag">"Your Starting Lineup"</div></div><div class="camp-val">22%</div></div><div class="camp-track"><div class="camp-fill" style="width:22%;"></div></div></div>
+          <div class="camp-row"><div class="camp-top"><div><div class="camp-name">Tommy x Cadillac Formula 1® Team</div><div class="camp-tag">Collaboration-led</div></div><div class="camp-val">18%</div></div><div class="camp-track"><div class="camp-fill" style="width:18%;"></div></div></div>
+          <div class="camp-row"><div class="camp-top"><div><div class="camp-name">The Logo Shop</div><div class="camp-tag">Nautical-flag heritage drop</div></div><div class="camp-val">13%</div></div><div class="camp-track"><div class="camp-fill" style="width:13%;"></div></div></div>
+          <div class="camp-row"><div class="camp-top"><div><div class="camp-name">New Cable Knits — Prep Icons</div><div class="camp-tag">Seasonal knitwear edit</div></div><div class="camp-val">9%</div></div><div class="camp-track"><div class="camp-fill" style="width:9%;"></div></div></div>
+        </div>
+
+        <section class="block" style="margin-top:36px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Awareness Channel Mix</h2></div>
+          <div class="grid2" style="margin-top:12px;">
+            <div>
+              <div class="chan-row"><span class="chan-name">Instagram</span><div class="chan-track"><div class="chan-fill" style="width:31%; background:var(--crimson);"></div></div><span class="chan-val">31%</span></div>
+              <div class="chan-row"><span class="chan-name">Organic Search</span><div class="chan-track"><div class="chan-fill" style="width:22%; background:var(--navy);"></div></div><span class="chan-val">22%</span></div>
+              <div class="chan-row"><span class="chan-name">Direct / App</span><div class="chan-track"><div class="chan-fill" style="width:16%; background:var(--gold);"></div></div><span class="chan-val">16%</span></div>
+              <div class="chan-row"><span class="chan-name">YouTube</span><div class="chan-track"><div class="chan-fill" style="width:12%; background:var(--crimson);"></div></div><span class="chan-val">12%</span></div>
+              <div class="chan-row"><span class="chan-name">Paid Search</span><div class="chan-track"><div class="chan-fill" style="width:9%; background:var(--navy);"></div></div><span class="chan-val">9%</span></div>
+              <div class="chan-row"><span class="chan-name">Pinterest / X</span><div class="chan-track"><div class="chan-fill" style="width:10%; background:var(--gold);"></div></div><span class="chan-val">10%</span></div>
+            </div>
+            <div class="note"><span class="n">"Polo Shirts"</span>Top on-site keyword search, followed by "Oxford shirt", "sneakers" and "Tommy Jeans" — filtered by size, colour and price on the results page.</div>
+          </div>
+        </section>
+
+        <section class="block" style="margin-top:36px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Marketplace &amp; Omnichannel Reach</h2></div>
+          <p class="sec-sub">Nearly half of demand happens off in.tommy.com — a funnel that only tracks the owned site misses this.</p>
+          <div class="chan-row"><span class="chan-name">in.tommy.com</span><div class="chan-track"><div class="chan-fill" style="width:52%; background:var(--navy);"></div></div><span class="chan-val">52%</span></div>
+          <div class="chan-row"><span class="chan-name">Myntra</span><div class="chan-track"><div class="chan-fill" style="width:23%; background:var(--crimson);"></div></div><span class="chan-val">23%</span></div>
+          <div class="chan-row"><span class="chan-name">Ajio</span><div class="chan-track"><div class="chan-fill" style="width:14%; background:var(--gold);"></div></div><span class="chan-val">14%</span></div>
+          <div class="chan-row"><span class="chan-name">Store (offline-to-online)</span><div class="chan-track"><div class="chan-fill" style="width:11%; background:var(--crimson);"></div></div><span class="chan-val">11%</span></div>
+        </section>
+      </div>
+
+      <div class="view" data-view="behavior">
+        <div class="sec-title"><h2>Shopper Behavior</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">How shoppers narrow down listings, save items, and which products actually convert.</p>
+        <div class="grid2">
+          <div>
+            <div class="chan-row"><span class="chan-name">Size filter</span><div class="chan-track"><div class="chan-fill" style="width:64%; background:var(--navy);"></div></div><span class="chan-val">64%</span></div>
+            <div class="chan-row"><span class="chan-name">Price filter</span><div class="chan-track"><div class="chan-fill" style="width:41%; background:var(--crimson);"></div></div><span class="chan-val">41%</span></div>
+            <div class="chan-row"><span class="chan-name">Colour filter</span><div class="chan-track"><div class="chan-fill" style="width:33%; background:var(--gold);"></div></div><span class="chan-val">33%</span></div>
+            <div class="chan-row"><span class="chan-name">Sort: Price low–high</span><div class="chan-track"><div class="chan-fill" style="width:22%; background:var(--crimson);"></div></div><span class="chan-val">22%</span></div>
+          </div>
+          <div class="note"><span class="n">9.1% of sessions</span>Use on-site search directly. Zero-result searches sit at 6% — mostly size-specific or misspelled queries, a fixable leak.</div>
+        </div>
+
+        <section class="block" style="margin-top:32px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Wishlist &amp; Account</h2></div>
+          <div class="kpi-grid" style="margin-top:12px;">
+            <div class="kpi"><div class="lbl">Wishlist Adds / Session</div><div class="num">0.34</div><div class="delta up">▲ 0.05</div></div>
+            <div class="kpi"><div class="lbl">Wishlist → Purchase</div><div class="num">18.2%</div><div class="delta up">▲ 1.6 pts</div></div>
+            <div class="kpi"><div class="lbl">Guest Checkout Share</div><div class="num">61%</div><div class="delta down">Fewer accounts</div></div>
+            <div class="kpi"><div class="lbl">Sign-in Rate</div><div class="num">44%</div><div class="delta up">▲ 3 pts</div></div>
+          </div>
+        </section>
+
+        <section class="block" style="margin-top:32px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Bestsellers Driving Purchase</h2></div>
+          <p class="sec-sub">Search to filter, click a column to sort.</p>
+          <input id="bsSearch" class="search" type="text" placeholder="Search product or category…">
+          <table class="dt">
+            <tr><th>Product</th><th>Category</th><th style="cursor:pointer;" data-sort="price">Price <span id="sortPrice"></span></th><th style="cursor:pointer;" data-sort="conv">Conv. rate <span id="sortConv"></span></th></tr>
+            <tbody id="bsBody"></tbody>
+          </table>
+          <p id="bsEmpty" style="display:none; font-size:12px; color:var(--slate); padding:12px 2px;">No products match that search.</p>
+        </section>
+
+        <section class="block" style="margin-top:32px;">
+          <div class="sec-title"><h2 style="font-size:18px;">New Launches vs. Bestsellers</h2></div>
+          <div class="kpi-grid" style="margin-top:12px;">
+            <div class="kpi"><div class="lbl">New Launch PDP Views</div><div class="num">31%</div><div class="delta up">of product views</div></div>
+            <div class="kpi"><div class="lbl">New Launch Conv. Rate</div><div class="num">5.4%</div><div class="delta down">vs. 7.8% bestsellers</div></div>
+            <div class="kpi"><div class="lbl">New Launch AOV</div><div class="num">₹5,210</div><div class="delta up">▲ vs. ₹4,860</div></div>
+            <div class="kpi"><div class="lbl">LAUNCH10 Attach Rate</div><div class="num">63%</div><div class="delta up">of new-launch orders</div></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="view" data-view="checkout">
+        <div class="sec-title"><h2>Checkout &amp; Payment</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">Where the purchase stage breaks down, and how shoppers choose to pay.</p>
+        <table class="dt" style="margin-bottom:20px;">
+          <tr><th>Checkout step</th><th>Sessions reaching</th><th>Drop from prior step</th></tr>
+          <tr><td>Cart viewed</td><td>100%</td><td>—</td></tr>
+          <tr><td>Address entered</td><td>74%</td><td>26%</td></tr>
+          <tr><td>Payment method selected</td><td>68%</td><td>8%</td></tr>
+          <tr><td>Order confirmed</td><td>61%</td><td>10%</td></tr>
+        </table>
+        <div class="chan-row"><span class="chan-name">UPI</span><div class="chan-track"><div class="chan-fill" style="width:47%; background:var(--navy);"></div></div><span class="chan-val">47%</span></div>
+        <div class="chan-row"><span class="chan-name">Cards</span><div class="chan-track"><div class="chan-fill" style="width:31%; background:var(--crimson);"></div></div><span class="chan-val">31%</span></div>
+        <div class="chan-row"><span class="chan-name">COD</span><div class="chan-track"><div class="chan-fill" style="width:14%; background:var(--gold);"></div></div><span class="chan-val">14%</span></div>
+        <div class="chan-row"><span class="chan-name">Wallets</span><div class="chan-track"><div class="chan-fill" style="width:8%; background:var(--crimson);"></div></div><span class="chan-val">8%</span></div>
+
+        <section class="block" style="margin-top:34px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Promo Code Impact Calculator</h2></div>
+          <p class="sec-sub">Model a different discount depth beyond LAUNCH10 — drag the slider.</p>
+          <div class="calc">
+            <div class="calc-top"><span>Discount depth</span><span id="promoPctLabel" class="num" style="font-size:16px;">10%</span></div>
+            <input id="promoSlider" type="range" min="5" max="30" step="1" value="10" style="width:100%; accent-color:var(--crimson);">
+            <div class="kpi-grid" style="margin-top:18px;">
+              <div class="kpi"><div class="lbl">Projected Redemption</div><div class="num" id="promoRedemption">41%</div></div>
+              <div class="kpi"><div class="lbl">Projected Cart→Purchase</div><div class="num" id="promoConv">61.2%</div></div>
+              <div class="kpi"><div class="lbl">AOV Impact</div><div class="num" id="promoAOV">₹4,860</div></div>
+              <div class="kpi"><div class="lbl">Net Revenue Effect</div><div class="num" id="promoRevenue">Baseline</div></div>
+            </div>
+            <p class="calc-note">Higher discount depth raises redemption and conversion but erodes AOV — the net revenue figure flips negative past a certain point.</p>
+          </div>
+        </section>
+
+        <section class="block" style="margin-top:34px;">
+          <div class="sec-title"><h2 style="font-size:18px;">Promotions &amp; Offer Cadence</h2></div>
+          <div class="kpi-grid" style="margin-top:12px;">
+            <div class="kpi"><div class="lbl">Active Codes This Quarter</div><div class="num">1</div><div class="delta down">Below category norm of 3–4</div></div>
+            <div class="kpi"><div class="lbl">LAUNCH10 Redemption</div><div class="num">41%</div><div class="delta up">▲ 6 pts since launch</div></div>
+            <div class="kpi"><div class="lbl">Cart Abandon, No Offer Shown</div><div class="num">58%</div><div class="delta down">Exit-intent opportunity</div></div>
+            <div class="kpi"><div class="lbl">Festive-window Coverage</div><div class="num">Partial</div><div class="delta down">No Diwali/EOSS code live</div></div>
+          </div>
+        </section>
+      </div>
+
+      <div class="view" data-view="retention">
+        <div class="sec-title"><h2>Retention &amp; Fit</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">Post-purchase behaviour, and how much of returns is genuinely a sizing problem.</p>
+        <div class="patch-grid">
+          <div class="patch"><h3>Order Tracking Visits</h3><div class="num">64%</div><p>Of buyers check order status post-purchase.</p></div>
+          <div class="patch"><h3>Return Rate</h3><div class="num">14.6%</div><p>Initiated via the Returns &amp; Refunds flow.</p></div>
+          <div class="patch"><h3>Support Contacts</h3><div class="num">3.2%</div><p>Of orders generate a Contact Us / FAQ visit.</p></div>
+          <div class="patch"><h3>Store Locator Use</h3><div class="num">9.8%</div><p>Online sessions checking nearby store stock.</p></div>
+          <div class="patch"><h3>Size Guide Opens</h3><div class="num">29%</div><p>Of PDP visits open the size chart before cart.</p></div>
+          <div class="patch"><h3>Size-related Returns</h3><div class="num">6.1%</div><p>Of the 14.6% total return rate is fit-specific.</p></div>
+          <div class="patch"><h3>Multi-size Cart Adds</h3><div class="num">4.3%</div><p>Add two sizes of one item, intending to keep one.</p></div>
+          <div class="patch"><h3>Exchange vs. Refund</h3><div class="num">68%</div><p>Of size-driven returns choose exchange.</p></div>
+        </div>
+      </div>
+
+      <div class="view" data-view="opportunities">
+        <div class="sec-title"><h2>Opportunities</h2></div><div class="gold-rule"></div>
+        <p class="sec-sub">Where the funnel is genuinely leaking, and a specific fix for each.</p>
+        <div class="patch-grid">
+          <div class="patch"><h3>Campaign Origin</h3><div class="num" style="font-size:18px;">Global-led</div><p>Only In New York and Cadillac F1 are globally sourced, not built around Indian context.</p></div>
+          <div class="patch"><h3>India-anchored Content</h3><div class="num" style="font-size:18px;">Low</div><p>No homepage module ties a campaign to an India-specific moment or festival.</p></div>
+          <div class="patch"><h3>Search Signal</h3><div class="num" style="font-size:18px;">Rising</div><p>Wedding/festive-occasion searches aren't yet matched by a dedicated module.</p></div>
+          <div class="patch"><h3>Suggested Fix</h3><div class="num" style="font-size:18px;">Festive Capsule</div><p>A Diwali/wedding-season edit, timed with a local ambassador, could lift Discovery-stage engagement.</p></div>
+        </div>
+        <div class="grid2" style="margin-top:24px;">
+          <div class="note"><span class="n">1 active code</span>LAUNCH10 alone versus a category norm of 3–4 — no festive-window or exit-intent offer live right now.</div>
+          <div class="note"><span class="n">58% silent abandon</span>Of abandoned carts never see any offer before leaving — the highest-leverage fix on this whole dashboard.</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+const VIEWS = [
+  {id:'overview', label:'Overview'},
+  {id:'funnel', label:'The Funnel'},
+  {id:'campaigns', label:'Campaigns & Channels'},
+  {id:'behavior', label:'Shopper Behavior'},
+  {id:'checkout', label:'Checkout & Payment'},
+  {id:'retention', label:'Retention & Fit'},
+  {id:'opportunities', label:'Opportunities'}
+];
+function buildNav(container, cls){
+  container.innerHTML = VIEWS.map(v=>`<div class="navitem ${cls} ${v.id==='overview'?'active':''}" data-view="${v.id}">${v.label}</div>`).join('');
+}
+buildNav(document.getElementById('navlist'), '');
+buildNav(document.getElementById('topbar'), '');
+// Delegated: nav items (sidebar + topbar) and overview index cards
+document.addEventListener('click', function(e){
+  const navEl = e.target.closest('.navitem');
+  if(navEl){ goTo(navEl.dataset.view); return; }
+  const cardEl = e.target.closest('.idx-card');
+  if(cardEl){ goTo(cardEl.dataset.goto); return; }
+  const tabEl = e.target.closest('#segTabs .tab');
+  if(tabEl){ setSeg(tabEl.dataset.seg, tabEl); return; }
+  const stageEl = e.target.closest('.stage');
+  if(stageEl && stageEl.dataset.stageIndex !== undefined){ selectStage(parseInt(stageEl.dataset.stageIndex,10)); return; }
+  const sortEl = e.target.closest('[data-sort]');
+  if(sortEl){ sortBS(sortEl.dataset.sort); return; }
+});
+function goTo(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active', v.dataset.view===id));
+  document.querySelectorAll('.navitem').forEach(n=>n.classList.toggle('active', n.dataset.view===id));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ---- Funnel ----
+const BASE = {
+  all:  { aware:2400000, discover:940000, consider:310000, purchase:58000, retain:24000, topCamp:'Only In New York', topChan:'Instagram' },
+  men:  { aware:1150000, discover:470000, consider:162000, purchase:33000, retain:14200, topCamp:'Varsity Prep', topChan:'Instagram' },
+  women:{ aware:980000,  discover:380000, consider:118000, purchase:20500, retain:8300,  topCamp:'Only In New York', topChan:'Pinterest' },
+  kids: { aware:270000,  discover:90000,  consider:30000,  purchase:4500,  retain:1500,  topCamp:'Varsity Prep', topChan:'Organic Search' }
+};
+let state = { seg:'all', selectedStage:null };
+function fmt(n){ return n>=1000000 ? (n/1000000).toFixed(2)+'M' : (n/1000).toFixed(1)+'K'; }
+function renderFunnel(){
+  const d = BASE[state.seg];
+  const stages = [
+    {name:'Awareness', sub:'social + search discovery', val:d.aware, color:'var(--navy)'},
+    {name:'Discovery', sub:'homepage + category browse', val:d.discover, color:'var(--navy2)'},
+    {name:'Consideration', sub:'product page, size/colour, wishlist', val:d.consider, color:'var(--crimson)'},
+    {name:'Purchase', sub:'cart → checkout → payment', val:d.purchase, color:'var(--navy)'},
+    {name:'Retention', sub:'tracking, returns, repeat visit', val:d.retain, color:'var(--crimson)'}
+  ];
+  let html='';
+  stages.forEach((s,i)=>{
+    const width = Math.max((s.val/d.aware*100), 8);
+    const sel = state.selectedStage===i ? 'selected' : '';
+    html += `<div class="stage ${sel}" data-stage-index="${i}"><div class="band" style="width:${width}%; background:${s.color};">
+      <span class="stage-name">${s.name}</span><span class="stage-sub">${s.sub}</span>
+      <span class="stage-meta"><span class="num">${fmt(s.val)}</span><span class="pct">${(s.val/d.aware*100).toFixed(1)}% of reach</span></span>
+    </div></div>`;
+    if(i<stages.length-1){
+      const drop = (100-(stages[i+1].val/s.val*100)).toFixed(0);
+      html += `<div class="dropoff">↓ ${drop}% drop to ${stages[i+1].name.toLowerCase()}</div>`;
+    }
+  });
+  document.getElementById('funnel').innerHTML = html;
+  renderDetail(stages, d);
+}
+function selectStage(i){ state.selectedStage = state.selectedStage===i ? null : i; renderFunnel(); }
+function renderDetail(stages, d){
+  const el = document.getElementById('detail');
+  if(state.selectedStage===null){ el.classList.remove('show'); return; }
+  const i = state.selectedStage, s = stages[i], next = stages[i+1];
+  const conv = next ? (next.val/s.val*100).toFixed(1)+'%' : '—';
+  el.innerHTML = `<div class="dt-title">${s.name} — detail</div><div class="dt-row">
+    <div><span>Volume</span><b>${fmt(s.val)}</b></div>
+    <div><span>Leading campaign</span><b style="font-size:14px;">${d.topCamp}</b></div>
+    <div><span>Leading channel</span><b style="font-size:14px;">${d.topChan}</b></div>
+    <div><span>Conversion to next</span><b>${conv}</b></div></div>`;
+  el.classList.add('show');
+}
+function renderKPIs(){
+  const d = BASE[state.seg];
+  const rows = [
+    {lbl:'Reach → Purchase', num:(d.purchase/d.aware*100).toFixed(2)+'%', delta:'▲ 0.4 pts', cls:'up'},
+    {lbl:'LAUNCH10 Redemption', num:'41%', delta:'▲ 6 pts', cls:'up'},
+    {lbl:'Avg. Order Value', num:'₹4,860', delta:'▲ ₹210', cls:'up'},
+    {lbl:'Return Rate', num:'14.6%', delta:'▼ 1.1 pts', cls:'down'}
+  ];
+  document.getElementById('kpiGrid').innerHTML = rows.map(k=>`<div class="kpi"><div class="lbl">${k.lbl}</div><div class="num">${k.num}</div><div class="delta ${k.cls}">${k.delta}</div></div>`).join('');
+}
+function setSeg(seg, el){
+  state.seg = seg; state.selectedStage = null;
+  document.querySelectorAll('#segTabs .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  renderFunnel(); renderKPIs();
+}
+renderFunnel(); renderKPIs();
+
+// ---- Bestsellers ----
+const PRODUCTS = [
+  {name:'Regular Fit Solid Oxford Shirt', cat:'Men · Clothing', price:5999, conv:7.8},
+  {name:'Signature Micro Ess Brief', cat:'Men · Underwear', price:899, conv:11.2},
+  {name:'Regular Fit Solid Poplin Shirt', cat:'Men · Clothing', price:4999, conv:6.9},
+  {name:'Regular Fit Solid Pique Polo', cat:'Men · Clothing', price:3599, conv:9.4},
+  {name:'Men Hilfiger Mix Suede Buckle Sandal', cat:'Men · Footwear', price:6599, conv:5.1}
+];
+let bsSort = {key:null, dir:1};
+function sortBS(key){
+  bsSort.dir = (bsSort.key===key) ? -bsSort.dir : 1; bsSort.key = key;
+  document.getElementById('sortPrice').textContent = key==='price' ? (bsSort.dir>0?'▲':'▼') : '';
+  document.getElementById('sortConv').textContent = key==='conv' ? (bsSort.dir>0?'▲':'▼') : '';
+  renderBS();
+}
+function renderBS(){
+  const q = document.getElementById('bsSearch').value.trim().toLowerCase();
+  let rows = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q));
+  if(bsSort.key){ rows = rows.slice().sort((a,b)=> (a[bsSort.key]-b[bsSort.key]) * bsSort.dir); }
+  const body = document.getElementById('bsBody'), empty = document.getElementById('bsEmpty');
+  if(rows.length===0){ body.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+  body.innerHTML = rows.map(p=>`<tr><td>${p.name}</td><td><span class="cat-pill">${p.cat}</span></td><td class="price">₹${p.price.toLocaleString('en-IN')}</td><td>${p.conv}%</td></tr>`).join('');
+}
+renderBS();
+
+// ---- Promo calculator ----
+function renderPromo(){
+  const pct = parseInt(document.getElementById('promoSlider').value, 10);
+  document.getElementById('promoPctLabel').textContent = pct+'%';
+  const baseAOV = 4860, baseConv = 61.2, baseRedeem = 41;
+  const redemption = Math.min(85, Math.round(baseRedeem + (pct-10)*2.2));
+  const conv = Math.min(78, +(baseConv + (pct-10)*0.6).toFixed(1));
+  const aov = Math.round(baseAOV * (1 - (pct-10)*0.006));
+  const baseline = baseAOV * (baseConv/100) * (baseRedeem/100);
+  const projected = aov * (conv/100) * (redemption/100);
+  const netPct = ((projected-baseline)/baseline*100).toFixed(1);
+  const revEl = document.getElementById('promoRevenue');
+  revEl.textContent = (netPct>=0?'+':'') + netPct + '%';
+  revEl.style.color = netPct>=0 ? 'var(--green)' : 'var(--crimson)';
+  document.getElementById('promoRedemption').textContent = redemption+'%';
+  document.getElementById('promoConv').textContent = conv+'%';
+  document.getElementById('promoAOV').textContent = '₹'+aov.toLocaleString('en-IN');
+}
+renderPromo();
+
+// Input-type listeners (not click, so handled separately from the delegated click handler)
+document.getElementById('bsSearch').addEventListener('input', renderBS);
+document.getElementById('promoSlider').addEventListener('input', renderPromo);
+</script>
+
+</body>
+</html>
